@@ -16,6 +16,16 @@ You run Claude Code, Codex, OpenCode and Pi in lots of apps: the terminal, Claud
 
 `provenance prs` lists your open PRs with the session behind each one: the app it runs in, when it was last active, and whether it's running or waiting for you. `provenance go` opens that session, and `provenance send` messages it.
 
+| | Claude Code | Codex | OpenCode | Pi |
+|---|---|---|---|---|
+| `prs`: the session behind each PR | Yes | Yes | Yes | Yes |
+| Live status | With `install` | With `install` | From its database, guessing "waiting" while any `opencode` runs | With `install` |
+| `go`: switch to a running session | With `install` | With `install` | No: prints the resume command | With `install` |
+| `go`: resume an ended session | Yes | Yes | Yes | Yes |
+| `send`: message the session | With `install` | With `install` | Not yet | Not yet |
+
+Without `install`, provenance can't tell that a session is running, so `go` resumes it (a second copy) and `send` refuses it.
+
 ## Highlights
 
 - **Works with nothing installed.** It reads the session logs Claude Code, Codex and Pi already write, and OpenCode's session database.
@@ -71,7 +81,7 @@ provenance install      # optional: exact stamps and live status
 
 ### Messaging the session behind a PR
 
-`provenance send` delivers a message into a running session through the harness's own way in. The session answers with the `reply` tool of `provenance mcp`, which `install` registers in Claude Code and Codex. Agents get the same `send` tool, so one session can ask the session behind another PR a question, and the answer comes back to it as a message.
+`provenance send` messages the newest session matched to the PR that can take a message now, and passes over any it can't reach (an OpenCode session, an ended one). If none can, it says why for each, and `--resume` falls back to the newest session it can resume. It delivers through the harness's own way in. The session answers with the `reply` tool of `provenance mcp`, which `install` registers in Claude Code and Codex. Agents get the same `send` tool, so one session can ask the session behind another PR a question, and the answer comes back to it as a message.
 
 | Session | How the message gets in |
 |---|---|
